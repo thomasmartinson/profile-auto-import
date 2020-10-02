@@ -48,6 +48,7 @@ $(document).ready(function(){
     }
 
     // parse the resume text
+    // TODO potential bug - script is run when resume is not visible or not yet loaded
     const max_length = 1000;
     let resume_text = ""
     $("div.textLayer span").each(function() {
@@ -77,7 +78,8 @@ $(document).ready(function(){
     for (let item in regexes) {
         let matches = resume_text.match(regexes[item])
         if (matches != null) {
-            candidate_info[item] = matches[0]; 
+            candidate_info[item] = matches[0];
+            // TODO fix phone number
         }
     }
 
@@ -85,14 +87,20 @@ $(document).ready(function(){
     for (let item in candidate_info) {
         console.log(`${item}: ${candidate_info[item]}`);
     }
+    
+    // download resume
+    $("#button-download-resume").click();
+    // inject script into web page
+    // source: https://stackoverflow.com/a/9517879
+    var actualCode = `document.getElementsByClassName('dropdown-item')[0].click()`;
+    var script = document.createElement('script');
+    script.textContent = actualCode;
+    (document.head||document.documentElement).appendChild(script);
+    script.remove();
 
-    alert("Claire is cute!");
+    // TODO access and read in downloaded file
 
-    // get resume file
-    // TODO
-
-    // package all info into HTTP POST request using "multipart/form-data" body
-    // TODO
+    // TODO package all info into HTTP POST request using "multipart/form-data" body
 
 });
 
