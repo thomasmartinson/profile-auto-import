@@ -86,6 +86,8 @@ $(document).ready(function(){
         console.log(`${item}: ${candidate_info[item]}`);
     }
 
+    alert("Claire is cute!");
+
     // get resume file
     // TODO
 
