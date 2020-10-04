@@ -1,7 +1,7 @@
 {
-    "name": "Getting Started Example",
+    "name": "Profile Auto-Import",
     "version": "1.0",
-    "description": "Build an Extension!",
+    "description": "Import a candidate profile at the press of a button!",
     "options_page": "options.html",
     "permissions": ["tabs", "activeTab", "declarativeContent", "storage"],
     "background": {
