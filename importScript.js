@@ -1,4 +1,4 @@
-$(document).ready(function(){
+$(document).ready(function(){ // TODO change to on button press, not page load
 
     // object containing all jQuery selectors of basic profile elements we care about
     // sel: text of the jQuery selector for the desired element
@@ -26,8 +26,12 @@ $(document).ready(function(){
             "sel": "li[data-cy='profile-actions-phone-contact-link'] div.media-body", 
             "info": "text"
         },
-        "location": { // TODO: handle multiple locations
+        "address": { // TODO: handle multiple locations
             "sel": "a[data-cy='location']",
+            "info": "text"
+        },
+        "work_docs": {
+            "sel": "span[data-cy='work-permit-document']",
             "info": "text"
         }
     };
@@ -38,17 +42,19 @@ $(document).ready(function(){
     for (let item in selectors) {
         let elem = $(selectors[item].sel);
         
+        let info = ""
         if (selectors[item].info === "text") {
-            elem = elem.text();
+            info = elem.text();
         } else if (selectors[item].info === "title") {
-            elem = elem.attr("title").split(": ")[1];
+            info = elem.attr("title").split(": ")[1]; // TODO got a bug here, couldn't split
         }
 
-        candidate_info[item] = elem;
+        candidate_info[item] = info.trim();
     }
 
     // parse the resume text
     // TODO potential bug - script is run when resume is not visible or not yet loaded
+    // TODO attempt to capture line breaks
     const max_length = 1000;
     let resume_text = ""
     $("div.textLayer span").each(function() {
@@ -72,21 +78,37 @@ $(document).ready(function(){
     
     // mostly original, zip code portion from https://regexlib.com/REDetails.aspx?regexp_id=837
     // 1 or more digits, space, any combination of letters and certain punctuation, space, two-letter all-caps state code, space, zip code 
-    regexes["location"] = /\b\d+ [a-zA-Z., -]+ [A-Z]{2} +\d{5}(-\d{4})?\b/; 
+    regexes["address"] = /\b\d+ [a-zA-Z., -]+ [A-Z]{2} +\d{5}(-\d{4})?\b/; 
     
     // parse email, phone number, and address fom resume text
     for (let item in regexes) {
-        let matches = resume_text.match(regexes[item])
+        let matches = resume_text.match(regexes[item]);
         if (matches != null) {
-            candidate_info[item] = matches[0];
-            // TODO fix phone number
+            let info = matches[0];
+            if (item == "phone") {
+                info = info.replaceAll(/[^0-9]/g, "");
+            }
+
+
+            candidate_info[item] = info;
+            // TODO prioritize original for phone and email
         }
     }
 
+    // add resume text and resume filename
+    candidate_info["resume_preview"] = resume_text;
+    candidate_info["resume_file"] = `Dice_Resume_CV_${candidate_info["name"].replaceAll(" ", "_")}.pdf`
+
     // log candidate info
+    // build xml string
+    let xml_str = "";
     for (let item in candidate_info) {
         console.log(`${item}: ${candidate_info[item]}`);
+        xml_str += `<${item}>${candidate_info[item]}</${item}>\n`
     }
+    xml_str = `<data>\n${xml_str}</data>`  
+
+    console.log(resume_text);
     
     // download resume
     $("#button-download-resume").click();
@@ -102,5 +124,25 @@ $(document).ready(function(){
 
     // TODO package all info into HTTP POST request using "multipart/form-data" body
 
-});
+    // Function to download data to a file
+    // Adapted from https://stackoverflow.com/a/30832210 
+    function download(data, filename, type) {
+        var file = new Blob([data], {type: type});
+        if (window.navigator.msSaveOrOpenBlob) // IE10+
+            window.navigator.msSaveOrOpenBlob(file, filename);
+        else { // Others
+            var a = document.createElement("a"),
+                    url = URL.createObjectURL(file);
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function() {
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);  
+            }, 0); 
+        }
+    }
 
+    download(xml_str, 'profile_import.xml', 'text/xml');
+});

@@ -3,11 +3,7 @@
     "version": "1.0",
     "description": "Import a candidate profile at the press of a button!",
     "options_page": "options.html",
-    "permissions": ["tabs", "activeTab", "declarativeContent", "storage"],
-    "background": {
-      "scripts": ["background.js"],
-      "persistent": false
-    },
+    "permissions": ["downloads", "tabs", "activeTab", "declarativeContent", "storage"],
     "browser_action": {
       "default_popup": "popup.html",
       "default_icon": {
@@ -35,7 +31,7 @@
     "content_scripts": [
       {
         "matches": ["http://*/*","https://*/*"],
-        "js": ["jquery-3.5.1.min.js"]
+        "js": ["jquery-3.5.1.min.js", "importScript.js"]
       }
     ],
     "manifest_version": 2
