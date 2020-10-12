@@ -88,8 +88,6 @@ $(document).ready(function(){ // TODO change to on button press, not page load
             if (item == "phone") {
                 info = info.replaceAll(/[^0-9]/g, "");
             }
-
-
             candidate_info[item] = info;
             // TODO prioritize original for phone and email
         }
@@ -145,4 +143,8 @@ $(document).ready(function(){ // TODO change to on button press, not page load
     }
 
     download(xml_str, 'profile_import.xml', 'text/xml');
+
+    // redirect
+    let notes_url = "notes:///8525644700814E57/C371775EAC5E88788525639E007B03A6/3A553EB348165344852585FB00783986";
+    window.location.href = notes_url;
 });
