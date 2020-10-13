@@ -9,7 +9,9 @@ $(document).ready(function(){
                     sendResponse(xml_str);
                     break;
                 case "import":
+                    // download xml
                     download(xml_str, 'profile_import.xml', 'text/xml');
+                    
                     // download resume
                     $("#button-download-resume").click();
                     // inject script into web page
@@ -19,11 +21,16 @@ $(document).ready(function(){
                     script.textContent = actualCode;
                     (document.head||document.documentElement).appendChild(script);
                     script.remove();
+                    
+                    // redirect
+                    let notes_url = "notes:///8525644700814E57/C371775EAC5E88788525639E007B03A6/3A553EB348165344852585FB00783986";
+                    window.location.href = notes_url;
                     break;
             }
             
     });
 });
+
 
 // Function to download data to a file
 // Adapted from https://stackoverflow.com/a/30832210 
@@ -44,6 +51,7 @@ function download(data, filename, type) {
         }, 0); 
     }
 }
+
 
 function import_profile() {
 // TODO change to on button press, not page load
@@ -164,8 +172,5 @@ function import_profile() {
 
     console.log(resume_text);
 
-    // redirect
-    // let notes_url = "notes:///8525644700814E57/C371775EAC5E88788525639E007B03A6/3A553EB348165344852585FB00783986";
-    // window.location.href = notes_url;
     return xml_str;
 }
