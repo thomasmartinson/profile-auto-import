@@ -94,7 +94,15 @@ $(document).ready(function(){ // TODO change to on button press, not page load
     }
 
     // add resume text and resume filename
-    candidate_info["resume_preview"] = resume_text;
+    function escapeHtml(unsafe) {
+        return unsafe
+             .replace(/&/g, "&amp;")
+             .replace(/</g, "&lt;")
+             .replace(/>/g, "&gt;")
+             .replace(/"/g, "&quot;")
+             .replace(/'/g, "&#039;");
+    }
+    candidate_info["resume_preview"] = escapeHtml(resume_text);
     candidate_info["resume_file"] = `Dice_Resume_CV_${candidate_info["name"].replaceAll(" ", "_")}.pdf`
 
     // log candidate info
