@@ -16,7 +16,7 @@ $(document).ready(function(){
                     $("#button-download-resume").click();
                     // inject script into web page
                     // source: https://stackoverflow.com/a/9517879
-                    var actualCode = `document.getElementsByClassName('dropdown-item')[0].click()`;
+                    var actualCode = `document.getElementsByClassName('dropdown-item')[1].click()`;
                     var script = document.createElement('script');
                     script.textContent = actualCode;
                     (document.head||document.documentElement).appendChild(script);
