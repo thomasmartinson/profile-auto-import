@@ -112,13 +112,22 @@ function import_profile() {
     // TODO potential bug - script is run when resume is not visible or not yet loaded
     // TODO attempt to capture line breaks
     const max_length = 1000;
-    let resume_text = ""
+    let resume_text = "";
+    let max_px_height = 0;
+    let px_buffer = 8;
     $("div.textLayer span").each(function() {
         // approx first 10 lines of resume
         if (resume_text.length > max_length) {
             return;
         }
         
+        let this_px_height = parseFloat($(this).css("top").replace("px", ""));
+        console.log(this_px_height);
+        if (max_px_height + px_buffer < this_px_height) {
+            max_px_height = this_px_height;
+            resume_text += "\n";
+        }
+
         resume_text += $(this).text() + " ";
     });
 
