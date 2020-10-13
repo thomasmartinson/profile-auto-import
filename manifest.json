@@ -30,7 +30,7 @@
     },
     "content_scripts": [
       {
-        "matches": ["http://*/*","https://*/*"],
+        "matches": ["https://www.dice.com/employer/talent/profile/*"],
         "js": ["jquery-3.5.1.min.js", "importScript.js"]
       }
     ],
