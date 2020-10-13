@@ -1,4 +1,52 @@
-$(document).ready(function(){ // TODO change to on button press, not page load
+$(document).ready(function(){ 
+    let xml_str = "";
+    
+    chrome.runtime.onMessage.addListener(
+        function(message, sender, sendResponse){
+            switch(message.type) {
+                case "scrape":
+                    xml_str = import_profile();     
+                    sendResponse(xml_str);
+                    break;
+                case "import":
+                    download(xml_str, 'profile_import.xml', 'text/xml');
+                    // download resume
+                    $("#button-download-resume").click();
+                    // inject script into web page
+                    // source: https://stackoverflow.com/a/9517879
+                    var actualCode = `document.getElementsByClassName('dropdown-item')[0].click()`;
+                    var script = document.createElement('script');
+                    script.textContent = actualCode;
+                    (document.head||document.documentElement).appendChild(script);
+                    script.remove();
+                    break;
+            }
+            
+    });
+});
+
+// Function to download data to a file
+// Adapted from https://stackoverflow.com/a/30832210 
+function download(data, filename, type) {
+    var file = new Blob([data], {type: type});
+    if (window.navigator.msSaveOrOpenBlob) // IE10+
+        window.navigator.msSaveOrOpenBlob(file, filename);
+    else { // Others
+        var a = document.createElement("a"),
+                url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);  
+        }, 0); 
+    }
+}
+
+function import_profile() {
+// TODO change to on button press, not page load
 
     // object containing all jQuery selectors of basic profile elements we care about
     // sel: text of the jQuery selector for the desired element
@@ -115,44 +163,9 @@ $(document).ready(function(){ // TODO change to on button press, not page load
     xml_str = `<data>\n${xml_str}</data>`  
 
     console.log(resume_text);
-    
-    // download resume
-    $("#button-download-resume").click();
-    // inject script into web page
-    // source: https://stackoverflow.com/a/9517879
-    var actualCode = `document.getElementsByClassName('dropdown-item')[0].click()`;
-    var script = document.createElement('script');
-    script.textContent = actualCode;
-    (document.head||document.documentElement).appendChild(script);
-    script.remove();
-
-    // TODO access and read in downloaded file
-
-    // TODO package all info into HTTP POST request using "multipart/form-data" body
-
-    // Function to download data to a file
-    // Adapted from https://stackoverflow.com/a/30832210 
-    function download(data, filename, type) {
-        var file = new Blob([data], {type: type});
-        if (window.navigator.msSaveOrOpenBlob) // IE10+
-            window.navigator.msSaveOrOpenBlob(file, filename);
-        else { // Others
-            var a = document.createElement("a"),
-                    url = URL.createObjectURL(file);
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(function() {
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);  
-            }, 0); 
-        }
-    }
-
-    download(xml_str, 'profile_import.xml', 'text/xml');
 
     // redirect
-    let notes_url = "notes:///8525644700814E57/C371775EAC5E88788525639E007B03A6/3A553EB348165344852585FB00783986";
-    window.location.href = notes_url;
-});
+    // let notes_url = "notes:///8525644700814E57/C371775EAC5E88788525639E007B03A6/3A553EB348165344852585FB00783986";
+    // window.location.href = notes_url;
+    return xml_str;
+}
