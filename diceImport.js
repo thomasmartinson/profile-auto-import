@@ -126,27 +126,13 @@ function import_profile() {
         resume_text += $(this).text() + " ";
     });
 
-    // define regexes
-    let regexes = {};
-
-    // adapted from https://www.regular-expressions.info/email.html
-    regexes["email"] = /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/; 
-    
-    // original
-    // 3 continuous digits, 3 continuous digits, 4 continuous digits, with optional periods, dashes, and spacing between    
-    regexes["phone"] = /\b\(?\d{3}\)?[ –.-]*\d{3}[ –.-]*\d{4}\b/; 
-    
-    // mostly original, zip code portion from https://regexlib.com/REDetails.aspx?regexp_id=837
-    // 1 or more digits, space, any combination of letters and certain punctuation, space, two-letter all-caps state code, space, zip code 
-    regexes["address"] = /\b\d+ [a-zA-Z., -]+ [A-Z]{2} +\d{5}(-\d{4})?\b/; 
-    
     // parse email, phone number, and address fom resume text
-    for (let item in regexes) {
-        let matches = resume_text.match(regexes[item]);
+    for (let item in REGEXES) {
+        let matches = resume_text.match(REGEXES[item]);
         if (matches != null) {
             let info = matches[0];
             if (item == "phone") {
-                info = info.replaceAll(/[^0-9]/g, "");
+                info = reformat_phone(info);
             }
             candidate_info[item] = info;
             // TODO prioritize original for phone and email
@@ -154,25 +140,11 @@ function import_profile() {
     }
 
     // add resume text and resume filename
-    function escapeHtml(unsafe) {
-        return unsafe
-             .replace(/&/g, "&amp;")
-             .replace(/</g, "&lt;")
-             .replace(/>/g, "&gt;")
-             .replace(/"/g, "&quot;")
-             .replace(/'/g, "&#039;");
-    }
-    candidate_info["resume_preview"] = escapeHtml(resume_text);
+    candidate_info["resume_preview"] = escape_html(resume_text);
     candidate_info["resume_file"] = `Dice_Resume_CV_${candidate_info["name"].replaceAll(" ", "_")}.pdf`
 
-    // log candidate info
     // build xml string
-    let xml_str = "";
-    for (let item in candidate_info) {
-        console.log(`${item}: ${candidate_info[item]}`);
-        xml_str += `<${item}>${candidate_info[item]}</${item}>\n`
-    }
-    xml_str = `<data>\n${xml_str}</data>`  
+    let xml_str = obj_to_xml(candidate_info);
 
     return xml_str;
 }

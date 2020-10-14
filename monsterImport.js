@@ -45,7 +45,7 @@ function scrape() {
     info["email"] = $(".has-candidate-contact-block:last-child #contact-legend-detail").text().trim();
 
     // phone number
-    info["phone"] = $(".has-candidate-contact-block:first-child").text().replaceAll(/[^0-9]/g, "");
+    info["phone"] = reformat_phone($(".has-candidate-contact-block:first-child").text());
     
     // full address
     info["address"] = "";
