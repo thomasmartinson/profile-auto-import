@@ -10,7 +10,7 @@ $(document).ready(function(){
                     break;
                 case "import":
                     // download xml
-                    download(xml_str, 'profile_import.xml', 'text/xml');
+                    download_xml(xml_str);
                     
                     // download resume
                     $("#button-download-resume").click();
@@ -30,27 +30,6 @@ $(document).ready(function(){
             
     });
 });
-
-
-// Function to download data to a file
-// Adapted from https://stackoverflow.com/a/30832210 
-function download(data, filename, type) {
-    var file = new Blob([data], {type: type});
-    if (window.navigator.msSaveOrOpenBlob) // IE10+
-        window.navigator.msSaveOrOpenBlob(file, filename);
-    else { // Others
-        var a = document.createElement("a"),
-                url = URL.createObjectURL(file);
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function() {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);  
-        }, 0); 
-    }
-}
 
 
 function import_profile() {

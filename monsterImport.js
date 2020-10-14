@@ -18,8 +18,9 @@ $(document).ready(function(){
 
 
 // downloads all candidate info and opens Notes import page
-function import_profile() {
-    // TODO download xml
+function import_profile(xml_str) {
+    // download xml
+    download_xml(xml_str);
 
     // TODO download resume
 
