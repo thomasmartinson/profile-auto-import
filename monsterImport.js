@@ -1,18 +1,30 @@
 $(document).ready(function(){ 
+    let xml_str = ""
+    
     chrome.runtime.onMessage.addListener(
         function(message, sender, sendResponse){
             switch(message.type) {
                 case "scrape":
-                    let xml_str = scrape();
+                    xml_str = scrape();
                     sendResponse(xml_str);
                     break;
                 case "import":
-                    // TODO
+                    import_profile(xml_str);
                     break;
             }
         }
     );
 });
+
+
+// downloads all candidate info and opens Notes import page
+function import_profile() {
+    // TODO download xml
+
+    // TODO download resume
+
+    // TODO redirect
+}
 
 
 // extracts all info from profile page
