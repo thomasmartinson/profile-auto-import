@@ -4,8 +4,7 @@ $("#run_btn").click(function(element) {
       $("#text").text(response);
       $("#run_btn").text("Try again");
       $("#import_btn").show();
-      let count = parseInt($("#count").text())
-      $("#count").text(String(++count))
+      $("#text").show();
     });
   });
 });

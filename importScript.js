@@ -54,8 +54,6 @@ function download(data, filename, type) {
 
 
 function import_profile() {
-// TODO change to on button press, not page load
-
     // object containing all jQuery selectors of basic profile elements we care about
     // sel: text of the jQuery selector for the desired element
     // info: where the desired information is stored
@@ -102,15 +100,13 @@ function import_profile() {
         if (selectors[item].info === "text") {
             info = elem.text();
         } else if (selectors[item].info === "title") {
-            info = elem.attr("title").split(": ")[1]; // TODO got a bug here, couldn't split
+            info = elem.attr("title").split(": ")[1];
         }
 
         candidate_info[item] = info.trim();
     }
 
     // parse the resume text
-    // TODO potential bug - script is run when resume is not visible or not yet loaded
-    // TODO attempt to capture line breaks
     const max_length = 1000;
     let resume_text = "";
     let max_px_height = 0;
@@ -122,7 +118,6 @@ function import_profile() {
         }
         
         let this_px_height = parseFloat($(this).css("top").replace("px", ""));
-        console.log(this_px_height);
         if (max_px_height + px_buffer < this_px_height) {
             max_px_height = this_px_height;
             resume_text += "\n";
@@ -178,8 +173,6 @@ function import_profile() {
         xml_str += `<${item}>${candidate_info[item]}</${item}>\n`
     }
     xml_str = `<data>\n${xml_str}</data>`  
-
-    console.log(resume_text);
 
     return xml_str;
 }
