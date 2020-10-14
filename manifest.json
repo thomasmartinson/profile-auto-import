@@ -30,11 +30,11 @@
     "content_scripts": [
       {
         "matches": ["https://www.dice.com/employer/talent/profile/*"],
-        "js": ["jquery-3.5.1.min.js", "diceImport.js"]
+        "js": ["jquery-3.5.1.min.js", "utils.js", "diceImport.js"]
       },
       {
         "matches": ["https://hiring.monster.com/searchmonster/job/*"],
-        "js": ["jquery-3.5.1.min.js", "monsterImport.js"]
+        "js": ["jquery-3.5.1.min.js", "utils.js", "monsterImport.js"]
       }
     ],
     "manifest_version": 2

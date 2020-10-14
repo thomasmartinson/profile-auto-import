@@ -60,12 +60,7 @@ function scrape() {
     info["resume_file"] = "";
 
     // build XML string
-    let xml_str = "";
-    for (let item in info) {
-        console.log(`${item}: ${info[item]}`);
-        xml_str += `<${item}>${info[item]}</${item}>\n`
-    }
-    xml_str = `<data>\n${xml_str}</data>` 
+    let xml_str = obj_to_xml(info);
 
     return xml_str;
 }
