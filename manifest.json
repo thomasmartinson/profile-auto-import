@@ -2,7 +2,6 @@
     "name": "Profile Auto-Import",
     "version": "1.0",
     "description": "Import a candidate profile at the press of a button!",
-    "options_page": "options.html",
     "permissions": ["downloads", "tabs", "activeTab", "declarativeContent", "storage"],
     "browser_action": {
       "default_popup": "popup.html",
@@ -32,6 +31,10 @@
       {
         "matches": ["https://www.dice.com/employer/talent/profile/*"],
         "js": ["jquery-3.5.1.min.js", "importScript.js"]
+      },
+      {
+        "matches": ["https://hiring.monster.com/searchmonster/job/*"],
+        "js": ["jquery-3.5.1.min.js", "monsterImport.js"]
       }
     ],
     "manifest_version": 2
