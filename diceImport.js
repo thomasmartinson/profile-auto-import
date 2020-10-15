@@ -1,6 +1,14 @@
+let CURR_URL;
+
 $(document).ready(function(){ 
     let xml_str = "";
     
+    // update current URL
+    chrome.runtime.sendMessage({type:"url-request"}, function(response){
+        CURR_URL = response;
+    });
+
+    // handle messages
     chrome.runtime.onMessage.addListener(
         function(message, sender, sendResponse){
             switch(message.type) {
@@ -121,6 +129,9 @@ function import_profile() {
     // add resume text and resume filename
     candidate_info["resume_preview"] = escape_html(resume_text);
     candidate_info["resume_file"] = `Dice_Resume_CV_${candidate_info["name"].replaceAll(" ", "_")}.pdf`
+
+    // get profile ID from the current URL
+    candidate_info["profile_id"] = CURR_URL.split("profile/")[1].split("?")[0];
 
     // build xml string
     let xml_str = obj_to_xml(candidate_info);
