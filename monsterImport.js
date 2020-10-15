@@ -1,15 +1,20 @@
 $(document).ready(function(){ 
-    let xml_str = ""
+    let candidate_info = {};
     
     chrome.runtime.onMessage.addListener(
         function(message, sender, sendResponse){
             switch(message.type) {
                 case "scrape":
-                    xml_str = scrape();
-                    sendResponse(xml_str);
+                    candidate_info = scrape();
+                    sendResponse(obj_to_xml(candidate_info));
                     break;
                 case "import":
-                    import_profile(xml_str);
+                    download_resume();
+                    break;
+                case "filename":
+                    candidate_info["resume_file"] = "ayy lmao"
+                    console.log("ayy lmao");
+                    import_profile(candidate_info);
                     break;
             }
         }
@@ -18,14 +23,22 @@ $(document).ready(function(){
 
 
 // downloads all candidate info and opens Notes import page
-function import_profile(xml_str) {
+function download_resume() {
+    //chrome.runtime.sendMessage({type:"download-listener"}, function(response) {
+        // download resume
+        $(".svg-icon__download").click();
+    //});
+}
+
+
+// downloads candidate info as XML and redirects to import link
+function import_profile(candidate_info) {
     // download xml
-    download_xml(xml_str);
-
-    // TODO download resume
-
+    download_xml(obj_to_xml(candidate_info));
+        
     // TODO redirect
 }
+
 
 
 // extracts all info from profile page
@@ -97,8 +110,5 @@ function scrape() {
     // TODO access with downloads API
     info["resume_file"] = "";
 
-    // build XML string
-    let xml_str = obj_to_xml(info);
-
-    return xml_str;
+    return info;
 }
