@@ -94,28 +94,35 @@ function import_profile() {
     }
 
     // parse the resume text
-    const max_length = 1000;
+    const max_length = 250;
     let resume_text = "";
+	let short_resume_text = "";
     let max_px_height = 0;
     let px_buffer = 8;
     $("div.textLayer span").each(function() {
-        // approx first 10 lines of resume
-        if (resume_text.length > max_length) {
-            return;
-        }
-        
+
         let this_px_height = parseFloat($(this).css("top").replace("px", ""));
+		
+		if (max_px_height > this_px_height) {
+			// new page
+			max_px_height = 0;}
+		
         if (max_px_height + px_buffer < this_px_height) {
             max_px_height = this_px_height;
             resume_text += "\n";
         }
 
         resume_text += $(this).text() + " ";
+		        // approx first few lines of resume
+        if (resume_text.length < max_length) {
+            short_resume_text += $(this).text() + " ";
+        }
     });
 
     // parse email, phone number, and address fom resume text
     for (let item in REGEXES) {
-        let matches = resume_text.match(REGEXES[item]);
+        let matches = short_resume_text.match(REGEXES[item]);
+		
         if (matches != null) {
             let info = matches[0];
             if (item == "phone") {
