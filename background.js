@@ -8,14 +8,25 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     });
 });
 
+// capture the name of the resume as it is being downloaded
+// TODO triggers on all downloads, which is problematic when not downloading a resume
 chrome.downloads.onDeterminingFilename.addListener(function(downloadItem, suggest) {
     last_download = downloadItem.filename;
-    // suggest({filename: "ayy lmao", conflictAction: "overwrite"}); // renames the downloaded file
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs){
-        // send message back to contents script
-        // this doesn't work right now... I suspect due to a new tab being opened when the download is initiated
-        chrome.tabs.sendMessage(tabs[0].id, {type: "filename"}, function(response) {});  
-    });
+
+    // uncomment below to rename the downloaded file
+    // suggest({filename: "ayy lmao", conflictAction: "overwrite"});
+
+    if (!/profile_import/.test(last_download)) { // on downloaded resume, not import file
+        // send message to all tabs
+        // cannot simply send message to the active tab
+        // downloaded resume often opens a new tab
+        chrome.tabs.query({}, function(tabs) {
+            let message = {type: "filename", filename: last_download}
+            for (var i=0; i<tabs.length; ++i) {
+                chrome.tabs.sendMessage(tabs[i].id, message);
+            }
+        });
+    }
 });
 
 // receive messages

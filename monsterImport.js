@@ -1,6 +1,7 @@
 $(document).ready(function(){ 
     let candidate_info = {};
     
+    // add all message listeners
     chrome.runtime.onMessage.addListener(
         function(message, sender, sendResponse){
             switch(message.type) {
@@ -12,8 +13,7 @@ $(document).ready(function(){
                     download_resume();
                     break;
                 case "filename":
-                    candidate_info["resume_file"] = "ayy lmao"
-                    console.log("ayy lmao");
+                    candidate_info["resume_file"] = message.filename
                     import_profile(candidate_info);
                     break;
             }
