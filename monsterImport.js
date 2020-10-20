@@ -7,9 +7,9 @@ $(document).ready(function(){
             switch(message.type) {
                 case "scrape":
                     candidate_info = scrape();
-                    sendResponse(obj_to_xml(candidate_info));
+                    sendResponse(candidate_info);
                     break;
-                case "import":
+                case "download":
                     download_resume();
                     break;
                 case "filename":
@@ -24,10 +24,7 @@ $(document).ready(function(){
 
 // downloads all candidate info and opens Notes import page
 function download_resume() {
-    //chrome.runtime.sendMessage({type:"download-listener"}, function(response) {
-        // download resume
-        $(".svg-icon__download").click();
-    //});
+    $(".svg-icon__download").click();
 }
 
 
@@ -100,15 +97,8 @@ function scrape() {
         info["address"] = $("#candidateProfile .candidate-location").text();
     }
 
-    // work documents
-    info["work_docs"] = "";
-
     // approx first 10 lines of resume
     info["resume_preview"] = escape_html(resume_text);
-
-    // name of the resume file
-    // TODO access with downloads API
-    info["resume_file"] = "";
 
     return info;
 }
