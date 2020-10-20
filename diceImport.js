@@ -55,56 +55,10 @@ function download_resume() {
 
 // extracts all info from candidate profile page, returned in an object
 function scrape() {
-    // object containing all jQuery selectors of basic profile elements we care about
-    // sel: text of the jQuery selector for the desired element
-    // info: where the desired information is stored
-    //      - "text": within the text of the element 
-    //      - "title": within title attribute
-    let selectors = {
-        "name": {
-            "sel": "#profile-page-info-name",
-            "info": "text"
-        },
-        "last_activity": {
-            "sel": "div[data-cy='profile-activity-date-last-active']", 
-            "info": "title"
-        },
-        "resume_updated": {
-            "sel": "div[data-cy='profile-activity-resume-updated']", 
-            "info": "title"
-        },
-        "email": {
-            "sel": "li[data-cy='profile-actions-email-contact-link'] div.media-body", 
-            "info": "text"
-        },
-        "phone": {
-            "sel": "li[data-cy='profile-actions-phone-contact-link'] div.media-body", 
-            "info": "text"
-        },
-        "address": { // TODO: handle multiple locations
-            "sel": "a[data-cy='location']",
-            "info": "text"
-        },
-        "work_docs": {
-            "sel": "span[data-cy='work-permit-document']",
-            "info": "text"
-        }
-    };
-
-    // store candidate info into new object
-    let candidate_info = {};
-
-    for (let item in selectors) {
-        let elem = $(selectors[item].sel);
-        
-        let info = ""
-        if (selectors[item].info === "text") {
-            info = elem.text();
-        } else if (selectors[item].info === "title") {
-            info = elem.attr("title").split(": ")[1];
-        }
-
-        candidate_info[item] = info.trim();
+    // make sure the resume preview is loaded
+    if ($(".textLayer span").length < 1) {
+        alert("Please wait for the resume preview to load before importing.");
+        return {};
     }
 
     // parse the resume text
@@ -114,7 +68,6 @@ function scrape() {
     let max_px_height = 0;
     let px_buffer = 8;
     $("div.textLayer span").each(function() {
-
         let this_px_height = parseFloat($(this).css("top").replace("px", ""));
 		
 		if (max_px_height > this_px_height) {
@@ -133,26 +86,48 @@ function scrape() {
         }
     });
 
-    // parse email, phone number, and address fom resume text
-    for (let item in REGEXES) {
-        let matches = short_resume_text.match(REGEXES[item]);
-		
-        if (matches != null) {
-            let info = matches[0];
-            if (item == "phone") {
-                info = reformat_phone(info);
-            }
-            candidate_info[item] = info;
-            // TODO prioritize original for phone and email
-        }
+    // extract details from resume text
+    let parsed_info = parse_from_resume(short_resume_text);
+
+    let info = {};
+
+    // full name
+    info["name"] = $("#profile-page-info-name").text().trim();
+
+    // last user activity on the site
+    info["last_activity"] = $("div[data-cy='profile-activity-date-last-active']").attr("title").split(": ")[1];
+    
+    // last time the resume was updated
+    info["resume_updated"] = $("div[data-cy='profile-activity-resume-updated']").attr("title").split(": ")[1];
+        
+    // email address
+    info["email"] = $("li[data-cy='profile-actions-email-contact-link'] div.media-body").text();
+    // use parsed email if email not found or if is a Dice private email
+    if (parsed_info.email && (!info.email || /dice/.test(info.email))) {
+        info.email = parsed_info.email;
+    } 
+
+    // phone number
+    info["phone"] = $("li[data-cy='profile-actions-phone-contact-link'] div.media-body").text();
+    if (!info.phone) {
+        info.phone = parsed_info.phone;
+    }
+    info.phone = reformat_phone(info.phone);
+
+    // home adress, or city of residence
+    info["address"] = parsed_info.address;
+    if (!info.address) {
+        info.address = $("a[data-cy='location']:first").text().trim();
     }
 
-    // add resume text and resume filename
-    candidate_info["resume_preview"] = escape_html(resume_text);
-    candidate_info["resume_file"] = `Dice_Resume_CV_${candidate_info["name"].replaceAll(" ", "_")}.pdf`
+    // work documents
+    info["work_docs"] = $("span[data-cy='work-permit-document']").text().trim();
+    
+    // add resume text
+    info["resume_preview"] = escape_html(resume_text);
 
     // get profile ID from the current URL
-    candidate_info["profile_id"] = CURR_URL.split("profile/")[1].split("?")[0];
+    info["profile_id"] = CURR_URL.split("profile/")[1].split("?")[0];
 
-    return candidate_info;
+    return info;
 }

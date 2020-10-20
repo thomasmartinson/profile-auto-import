@@ -1,16 +1,32 @@
 // obj with regexes useful for parsing info from resume text
 var REGEXES = {
     // adapted from https://www.regular-expressions.info/email.html
-    "email": /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/, 
+    email: /\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}\b/, 
 
     // original
     // 3 continuous digits, 3 continuous digits, 4 continuous digits, with optional periods, dashes, and spacing between    
-    "phone": /\b\(?\d{3}\)?[ –.-]*\d{3}[ –.-]*\d{4}\b/,
+    phone: /\b\(?\d{3}\)?[ –.-]*\d{3}[ –.-]*\d{4}\b/,
     
     // mostly original, zip code portion from https://regexlib.com/REDetails.aspx?regexp_id=837
     // 1 or more digits, space, any combination of letters and certain punctuation, space, two-letter all-caps state code, space, zip code 
-    "address": /\b\d+ [a-zA-Z., -]+ [A-Z]{2} +\d{5}(-\d{4})?\b/
+    address: /\b\d+ [a-zA-Z., -]+ [A-Z]{2} +\d{5}(-\d{4})?\b/
 };
+
+
+// return as an object the parseable info from the given string
+function parse_from_resume(text) {
+    parsed_info = {};
+    for (let item in REGEXES) {
+        parsed_info[item] = ""; // default to empty string
+        
+        let matches = text.match(REGEXES[item]);
+        if (matches != null) {
+            let info = matches[0];
+            parsed_info.item = info;
+        }
+    }
+    return parsed_info;
+}
 
 
 // download the given xml string into an xml file
