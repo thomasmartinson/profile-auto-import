@@ -1,7 +1,7 @@
 let CURR_URL;
 
 $(document).ready(function(){ 
-    let xml_str = "";
+    let candidate_info = {};
     
     // update current URL
     chrome.runtime.sendMessage({type:"url-request"}, function(response){
@@ -13,34 +13,48 @@ $(document).ready(function(){
         function(message, sender, sendResponse){
             switch(message.type) {
                 case "scrape":
-                    xml_str = import_profile();     
-                    sendResponse(xml_str);
+                    candidate_info = scrape();     
+                    sendResponse(candidate_info);
                     break;
-                case "import":
-                    // download xml
-                    download_xml(xml_str);
-                    
-                    // download resume
-                    $("#button-download-resume").click();
-                    // inject script into web page
-                    // source: https://stackoverflow.com/a/9517879
-                    var actualCode = `document.getElementsByClassName('dropdown-item')[1].click()`;
-                    var script = document.createElement('script');
-                    script.textContent = actualCode;
-                    (document.head||document.documentElement).appendChild(script);
-                    script.remove();
-                    
-                    // redirect
-                    let notes_url = "notes:///8525644700814E57/C371775EAC5E88788525639E007B03A6/3A553EB348165344852585FB00783986";
-                    window.location.href = notes_url;
+                case "download":
+                    download_resume();
+                    break;
+                case "filename":
+                    candidate_info["resume-file"] = message.filename;
+                    import_profile(candidate_info);
                     break;
             }
-            
-    });
+        }  
+    );
 });
 
 
-function import_profile() {
+// downloads candidate info as XML and redirects to import link
+function import_profile(candidate_info) {
+    // download xml
+    download_xml(obj_to_xml(candidate_info));
+
+    // redirect
+    let notes_url = "notes:///8525644700814E57/C371775EAC5E88788525639E007B03A6/3A553EB348165344852585FB00783986";
+    window.location.href = notes_url;    
+}
+
+
+// downloads the resume file
+function download_resume() {
+    $("#button-download-resume").click();
+    // inject script into web page
+    // source: https://stackoverflow.com/a/9517879
+    var actualCode = `document.getElementsByClassName('dropdown-item')[1].click()`;
+    var script = document.createElement('script');
+    script.textContent = actualCode;
+    (document.head||document.documentElement).appendChild(script);
+    script.remove();
+}
+
+
+// extracts all info from candidate profile page, returned in an object
+function scrape() {
     // object containing all jQuery selectors of basic profile elements we care about
     // sel: text of the jQuery selector for the desired element
     // info: where the desired information is stored
@@ -113,7 +127,7 @@ function import_profile() {
         }
 
         resume_text += $(this).text() + " ";
-		        // approx first few lines of resume
+		// approx first few lines of resume
         if (resume_text.length < max_length) {
             short_resume_text += $(this).text() + " ";
         }
@@ -140,8 +154,5 @@ function import_profile() {
     // get profile ID from the current URL
     candidate_info["profile_id"] = CURR_URL.split("profile/")[1].split("?")[0];
 
-    // build xml string
-    let xml_str = obj_to_xml(candidate_info);
-
-    return xml_str;
+    return candidate_info;
 }
