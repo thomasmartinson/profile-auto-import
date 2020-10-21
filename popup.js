@@ -4,7 +4,11 @@ $("#run_btn").click(function(element) {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     chrome.tabs.sendMessage(tabs[0].id, {type:"scrape"}, function(response){
       candidate_name = response.name;
-      $("#text").text(response);
+      let html_str = ""
+      for (item in response) {
+        html_str += `<strong>${item}</strong>: ${response[item].replaceAll("\n", "<br>")}<br>`;
+      }
+      $("#text").html(`<p>${html_str}</p>`);
       $("#run_btn").text("Try again");
       $("#import_btn").show();
       $("#text").show();
