@@ -13,7 +13,7 @@ $(document).ready(function(){
                     download_resume();
                     break;
                 case "filename":
-                    candidate_info["resume_file"] = message.filename
+                    candidate_info["resume_file"] = message.filename;
                     import_profile(candidate_info);
                     break;
             }
@@ -32,8 +32,10 @@ function download_resume() {
 function import_profile(candidate_info) {
     // download xml
     download_xml(obj_to_xml(candidate_info));
-        
-    // TODO redirect
+    
+    // redirect
+    let notes_url = "notes:///8525644700814E57/C371775EAC5E88788525639E007B03A6/3A553EB348165344852585FB00783986";
+    window.location.href = notes_url;    
 }
 
 
@@ -43,42 +45,45 @@ function scrape() {
     // make sure user has a candidate selected
     if ($(".candidate-profile-pane div").hasClass("candidate-profile-empty")) {
         alert("Please select a candidate before importing.");
-        return "";
+        return {};
     }
     
     // make sure user is on "Resume" tab
     if ($("#candidateProfile #__tab_1").hasClass("tab--inactive")) {
         alert("Please click on the \"Resume\" tab in the candidate's profile before importing.");
-        return "";
+        return {};
     }
 
     // parse the resume text
-    const max_length = 1000;
+    const max_length = 250;
     let resume_text = "";
-    $("#resume-frame").contents().find("p").each(function() {
-        // approx first 10 lines of resume
-        if (resume_text.length > max_length) {
-            return;
+    // iterate across every element in resume doc
+    $("#resume-frame").contents().find("*").each(function(){
+        // insert linebreaks at every linebreaking element
+        if (["P", "LI", "BR"].includes($(this).prop("tagName"))) {
+            resume_text += "\n";
         }
-
-        resume_text += $(this).text() + "\n";
+        // add text of elements with no children
+        if ($(this).children().length == 0) {
+            resume_text += $(this).text();
+        }
     });
+
+    let short_resume_text = resume_text.substring(0, max_length);
+    let parsed_info = parse_from_resume(short_resume_text);
     
     let info = {};
     
     // full name
     info["name"] = $("#candidateProfile .candidate-name div span:first").text();
 
-    // last activity
-    info["last_activity"] = "";
-
     // last resume update
     info["resume_updated"] = $(".candidate-resumeupdated-text").text();
     
     // email address
     info["email"] = $(".has-candidate-contact-block:last-child #contact-legend-detail").text().trim();
-    if (!info.email && REGEXES.email.test(resume_text)) {
-        info.email = resume_text.match(REGEXES.email)[0];
+    if (!info.email) {
+        info.email = parsed_info.email;
     }
 
     // phone number
@@ -86,18 +91,17 @@ function scrape() {
     if (!info.phone) {
         info.phone = reformat_phone($(".has-candidate-contact-block:nth-child(2)").text());
     }
-    if (!info.phone && REGEXES.phone.test(resume_text)) {
-        info.phone = reformat_phone(resume_text.match(REGEXES.phone)[0]);
+    if (!info.phone) {
+        info.phone = reformat_phone(parsed_info.phone);
     }
     
     // full address
-    if (REGEXES.address.test(resume_text)) {
-        info["address"] = resume_text.match(REGEXES.address)[0];
-    } else {
+    info["address"] = parsed_info.address;
+    if (!info.address) {
         info["address"] = $("#candidateProfile .candidate-location").text();
     }
 
-    // approx first 10 lines of resume
+    // full text of resume
     info["resume_preview"] = escape_html(resume_text);
 
     return info;
