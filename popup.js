@@ -1,17 +1,25 @@
+let debugMode = false;
+
 let candidate_name = null;
 
 $("#run_btn").click(function(element) {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
     chrome.tabs.sendMessage(tabs[0].id, {type:"scrape"}, function(response){
-      candidate_name = response.name;
-      let html_str = ""
-      for (let item in response) {
-        html_str += `<strong>${item}</strong>: ${response[item].replaceAll("\n", "<br>")}<br>`;
-      }
-      $("#text").html(`<p>${html_str}</p>`);
-      $("#run_btn").text("Try again");
-      $("#import_btn").show();
-      $("#text").show();
+		if (!response) {
+			$("#text").text(`Encountered error parsing web page.  Please reload the page and try again.`);
+			$("#text").show();
+		} else {
+			candidate_name = response.match(/(?<=<name>).*(?=<\/name>)/)[0];
+			if (debugMode) {
+				$("#text").text(response);
+				$("#run_btn").text("Try again");
+				$("#import_btn").show();
+				$("#text").show();
+			} else {
+				$("#text").hide();
+				$("#import_btn").click(); 
+			}
+		}	
     });
   });
 });
