@@ -9,23 +9,21 @@ chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
 });
 
 // capture the name of the resume as it is being downloaded
-// TODO triggers on all downloads, which is problematic when not downloading a resume
 chrome.downloads.onDeterminingFilename.addListener(function(downloadItem, suggest) {
     // triggers only when the candidate name variable is not null
     if (candidate_name !== null) { 
         // rename the file
         let split_name = downloadItem.filename.split(".");
         let file_extension = split_name[split_name.length - 1]; 
-        let new_filename = `${candidate_name.replace(" ", "_")}_resume.${file_extension}`;
+        let new_filename = `${candidate_name.replaceAll(" ", "_")}_resume.${file_extension}`;
         suggest({filename: new_filename, conflictAction: "uniquify"});
 
         // send message to all tabs
         // cannot simply send message to the active tab
         // downloaded resume often opens a new tab
         chrome.tabs.query({}, function(tabs) {
-            let message = {type: "filename", filename: new_filename}
             for (var i=0; i<tabs.length; ++i) {
-                chrome.tabs.sendMessage(tabs[i].id, message);
+                chrome.tabs.sendMessage(tabs[i].id, {type: "filename", filename: new_filename});
             }
         });
 

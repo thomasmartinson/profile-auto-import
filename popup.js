@@ -5,7 +5,7 @@ $("#run_btn").click(function(element) {
     chrome.tabs.sendMessage(tabs[0].id, {type:"scrape"}, function(response){
       candidate_name = response.name;
       let html_str = ""
-      for (item in response) {
+      for (let item in response) {
         html_str += `<strong>${item}</strong>: ${response[item].replaceAll("\n", "<br>")}<br>`;
       }
       $("#text").html(`<p>${html_str}</p>`);
