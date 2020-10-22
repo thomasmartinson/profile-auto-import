@@ -7,14 +7,17 @@ $(document).ready(function(){
             switch(message.type) {
                 case "scrape":
                     candidate_info = scrape();
-                    sendResponse(candidate_info);
+                    sendResponse(obj_to_xml(candidate_info));
                     break;
                 case "download":
                     download_resume();
                     break;
                 case "filename":
-                    candidate_info["resume_file"] = message.filename;
-                    import_profile(candidate_info);
+					// only fire if we are the intended tab
+					if (message.candidate_name === candidate_info.name) {
+						candidate_info["resume_file"] = message.filename;
+						import_profile(candidate_info);
+					}
                     break;
             }
         }
@@ -84,17 +87,21 @@ function scrape() {
     info["email"] = $(".has-candidate-contact-block:last-child #contact-legend-detail").text().trim();
     if (!info.email) {
         info.email = parsed_info.email;
-    }
+    } else {
+		if ((parsed_info.email !== "") & (parsed_info.email !== info.email)) {
+			info["email2"] = parsed_info.email;
+		}
+	}	
 
     // phone number
     info["phone"] = reformat_phone($(".has-candidate-contact-block:first-child").text());
+	
     if (!info.phone) {
         info.phone = reformat_phone($(".has-candidate-contact-block:nth-child(2)").text());
     }
     if (!info.phone) {
         info.phone = reformat_phone(parsed_info.phone);
     }
-    
     // full address
     info["address"] = parsed_info.address;
     if (!info.address) {
@@ -103,6 +110,9 @@ function scrape() {
 
     // full text of resume
     info["resume_preview"] = escape_html(resume_text);
+	
+	// set the source
+	info["source"] = "Monster"
 
     return info;
 }

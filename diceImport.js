@@ -14,14 +14,17 @@ $(document).ready(function(){
             switch(message.type) {
                 case "scrape":
                     candidate_info = scrape();     
-                    sendResponse(candidate_info);
+                    sendResponse(obj_to_xml(candidate_info));
                     break;
                 case "download":
                     download_resume();
                     break;
                 case "filename":
-                    candidate_info["resume-file"] = message.filename;
-                    import_profile(candidate_info);
+					// only fire if we are the intended tab
+					if (message.candidate_name === candidate_info.name) {
+						candidate_info["resume_file"] = message.filename;
+						import_profile(candidate_info);
+					}
                     break;
             }
         }  
@@ -101,12 +104,17 @@ function scrape() {
     info["resume_updated"] = $("div[data-cy='profile-activity-resume-updated']").attr("title").split(": ")[1];
         
     // email address
-    info["email"] = $("li[data-cy='profile-actions-email-contact-link'] div.media-body").text();
-    // use parsed email if email not found or if is a Dice private email
-    if (parsed_info.email && (!info.email || /dice/.test(info.email))) {
-        info.email = parsed_info.email;
-    } 
-
+    let scraped_email = $("li[data-cy='profile-actions-email-contact-link'] div.media-body").text();
+    // use parsed email first, and the scraped mail second, unless it is a Dice private email
+    if (parsed_info.email) {
+		info["email"] = parsed_info.email;
+		if (!(/\.dice\./.test(scraped_email)) && (scraped_email !== parsed_info.email))  {
+			info["email2"] = scraped_email;
+		}
+	} else {
+		info["email"] = scraped_email;
+	}
+	
     // phone number
     info["phone"] = $("li[data-cy='profile-actions-phone-contact-link'] div.media-body").text();
     if (!info.phone) {
@@ -128,6 +136,9 @@ function scrape() {
 
     // get profile ID from the current URL
     info["profile_id"] = CURR_URL.split("profile/")[1].split("?")[0];
+	
+	// set the source
+	info["source"] = "Dice"
 
     return info;
 }

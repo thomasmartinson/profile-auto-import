@@ -20,10 +20,13 @@ chrome.downloads.onDeterminingFilename.addListener(function(downloadItem, sugges
         suggest({filename: new_filename, conflictAction: "uniquify"});
 
         // send message to all tabs
-        // cannot simply send message to the active tab
-        // downloaded resume often opens a new tab
+        // cannot simply send message to the active tab since 
+        // downloaded resume often opens a new tab.
+		// send along the candidate name to make sure that the message is processed
+		// only by the content script for the intended tab
+		let candidate_name_copy = candidate_name.slice();
         chrome.tabs.query({}, function(tabs) {
-            let message = {type: "filename", filename: new_filename}
+            let message = {type: "filename", filename: new_filename, candidate_name: candidate_name_copy}
             for (var i=0; i<tabs.length; ++i) {
                 chrome.tabs.sendMessage(tabs[i].id, message);
             }
