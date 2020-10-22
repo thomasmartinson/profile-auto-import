@@ -1,6 +1,7 @@
 let debugMode = false;
 
 let candidate_name = null;
+let xml_str = null;
 
 $("#run_btn").click(function(element) {
   chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
@@ -9,6 +10,7 @@ $("#run_btn").click(function(element) {
 			$("#text").text(`Encountered error parsing web page.  Please reload the page and try again.`);
 			$("#text").show();
 		} else {
+      xml_str = response;
 			candidate_name = response.match(/(?<=<name>).*(?=<\/name>)/)[0];
 			if (debugMode) {
 				$("#text").text(response);
@@ -26,5 +28,5 @@ $("#run_btn").click(function(element) {
 
 $("#import_btn").click(function(element) {
   // send message to background
-  chrome.runtime.sendMessage({type: "listen-for-download", name: candidate_name});
+  chrome.runtime.sendMessage({type: "listen-for-download", name: candidate_name, xml: xml_str});
 });
