@@ -1,3 +1,7 @@
+//
+//   utility functions for import
+//
+
 // obj with regexes useful for parsing info from resume text
 var REGEXES = {
     // adapted from https://www.regular-expressions.info/email.html
@@ -9,11 +13,12 @@ var REGEXES = {
     
     // mostly original, zip code portion from https://regexlib.com/REDetails.aspx?regexp_id=837
     // 1 or more digits, space, any combination of letters and certain punctuation, space, two-letter all-caps state code, space, zip code 
-    address: /\b\d+ [a-zA-Z., -]+ [A-Z]{2} +\d{5}(-\d{4})?\b/
+    address: /\b\d+ [a-zA-Z., \r\n-]+ [A-Z]{2} +\d{5}(-\d{4})?\b/
 };
 
 
 // return as an object the parseable info from the given string
+// log it to the console along the way
 function parse_from_resume(text) {
     parsed_info = {};
     for (let item in REGEXES) {
@@ -22,7 +27,8 @@ function parse_from_resume(text) {
         let matches = text.match(REGEXES[item]);
         if (matches != null) {
             let info = matches[0];
-            parsed_info.item = info;
+            parsed_info[item] = info;
+			console.log(`Parsed ${item} : ${info}`);
         }
     }
     return parsed_info;
