@@ -9,6 +9,7 @@
     "declarativeContent",
     "storage"
   ],
+  "options_page": "options.html",
   "browser_action": {
     "default_popup": "popup.html",
     "default_icon": {
