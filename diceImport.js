@@ -19,28 +19,13 @@ $(document).ready(function(){
                 case "download":
                     download_resume();
                     break;
-                case "filename":
-					// only fire if we are the intended tab
-					if (message.candidate_name === candidate_info.name) {
-						candidate_info["resume_file"] = message.filename;
-						import_profile(candidate_info);
-					}
+				case "redirect":
+                    redirect_to_notes();
                     break;
             }
         }  
     );
 });
-
-
-// downloads candidate info as XML and redirects to import link
-function import_profile(candidate_info) {
-    // download xml
-    // download_xml(obj_to_xml(candidate_info));
-
-    // redirect
-    let notes_url = "notes:///8525644700814E57/C371775EAC5E88788525639E007B03A6/3A553EB348165344852585FB00783986";
-    window.location.href = notes_url;    
-}
 
 
 // downloads the resume file
@@ -108,7 +93,7 @@ function scrape() {
     // use parsed email first, and the scraped mail second, unless it is a Dice private email
     if (parsed_info.email) {
 		info["email"] = parsed_info.email;
-		if (!(/\.dice\./.test(scraped_email)) && (scraped_email !== parsed_info.email))  {
+		if (!(/\.dice\./.test(scraped_email)) && (scraped_email.toLowerCase() !== parsed_info.email.toLowerCase()))  {
 			info["email2"] = scraped_email;
 		}
 	} else {

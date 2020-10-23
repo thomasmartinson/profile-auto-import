@@ -12,12 +12,8 @@ $(document).ready(function(){
                 case "download":
                     download_resume();
                     break;
-                case "filename":
-					// only fire if we are the intended tab
-					if (message.candidate_name === candidate_info.name) {
-						candidate_info["resume_file"] = message.filename;
-						import_profile(candidate_info);
-					}
+				case "redirect":
+                    redirect_to_notes();
                     break;
             }
         }
@@ -29,18 +25,6 @@ $(document).ready(function(){
 function download_resume() {
     $(".svg-icon__download").click();
 }
-
-
-// downloads candidate info as XML and redirects to import link
-function import_profile(candidate_info) {
-    // download xml
-    // download_xml(obj_to_xml(candidate_info));
-    
-    // redirect
-    let notes_url = "notes:///8525644700814E57/C371775EAC5E88788525639E007B03A6/3A553EB348165344852585FB00783986";
-    window.location.href = notes_url;    
-}
-
 
 
 // extracts all info from profile page
@@ -88,7 +72,7 @@ function scrape() {
     if (!info.email) {
         info.email = parsed_info.email;
     } else {
-		if ((parsed_info.email !== "") & (parsed_info.email !== info.email)) {
+		if ((parsed_info.email !== "") & (parsed_info.email.toLowerCase() !== info.email.toLowerCase())) {
 			info["email2"] = parsed_info.email;
 		}
 	}	
