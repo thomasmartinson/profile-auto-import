@@ -55,7 +55,15 @@ function scrape() {
 	let short_resume_text = "";
     let max_px_height = 0;
     let px_buffer = 8;
-    $("div.textLayer span").each(function() {
+
+    // sort by "top" css value
+    // TODO enable factoring in horizontal, "offsetLeft"
+    // TODO test functionality when multiple resume pages present
+    let sorted_elems = $("div.textLayer span").sort(function(a, b) {
+        return a.offsetTop - b.offsetTop;
+    });
+
+    sorted_elems.each(function() {
         let this_px_height = parseFloat($(this).css("top").replace("px", ""));
 		
 		if (max_px_height > this_px_height) {
