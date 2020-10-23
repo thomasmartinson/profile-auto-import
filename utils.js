@@ -34,6 +34,11 @@ function parse_from_resume(text) {
     return parsed_info;
 }
 
+// redirects to the notes protocol URL for the import document
+function redirect_to_notes() {
+	let notes_url ="notes:///8525644700814E57/C371775EAC5E88788525639E007B03A6/3A553EB348165344852585FB00783986";
+	window.location.href = notes_url;
+}	
 
 // download the given xml string into an xml file
 function download_xml(xml_str) {

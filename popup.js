@@ -11,7 +11,7 @@ $("#run_btn").click(function(element) {
 			$("#text").show();
 		} else {
       xml_str = response;
-			candidate_name = response.match(/(?<=<name>).*(?=<\/name>)/)[0];
+
 			if (debugMode) {
 				$("#text").text(response);
 				$("#run_btn").text("Try again");
