@@ -51,35 +51,34 @@ function scrape() {
 
     // parse the resume text
     const max_length = 250;
+    const px_buffer = 8;
     let resume_text = "";
 	let short_resume_text = "";
-    let max_px_height = 0;
-    let px_buffer = 8;
+    $("div.page div.textLayer").each(function(){ // iterate over each page
+        // sort by "top" css value, and then by "left"
+        let sorted_elems = $(this).children().sort(function(a, b) {
+            let diff = a.offsetTop - b.offsetTop;
+            if (diff == 0) {
+                diff = a.offsetLeft - b.offsetLeft;
+            }
+            return diff;
+        });
 
-    // sort by "top" css value
-    // TODO enable factoring in horizontal, "offsetLeft"
-    // TODO test functionality when multiple resume pages present
-    let sorted_elems = $("div.textLayer span").sort(function(a, b) {
-        return a.offsetTop - b.offsetTop;
-    });
-
-    sorted_elems.each(function() {
-        let this_px_height = parseFloat($(this).css("top").replace("px", ""));
-		
-		if (max_px_height > this_px_height) {
-			// new page
-			max_px_height = 0;}
-		
-        if (max_px_height + px_buffer < this_px_height) {
-            max_px_height = this_px_height;
-            resume_text += "\n";
-        }
-
-        resume_text += $(this).text() + " ";
-		// approx first few lines of resume
-        if (resume_text.length < max_length) {
-            short_resume_text += $(this).text() + " ";
-        }
+        let max_px_height = 0;
+        sorted_elems.each(function() {
+            let this_px_height = this.offsetTop;
+            
+            if (max_px_height + px_buffer < this_px_height) {
+                max_px_height = this_px_height;
+                resume_text += "\n";
+            }
+    
+            resume_text += $(this).text() + " ";
+            // approx first few lines of resume
+            if (resume_text.length < max_length) {
+                short_resume_text += $(this).text() + " ";
+            }
+        });
     });
 
     // extract details from resume text
