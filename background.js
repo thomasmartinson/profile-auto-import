@@ -4,6 +4,19 @@ let state = "awaiting resume";
 let active_tab_id = null;
 let xml_str = null;
 
+// converts the given javascript object to an xml string
+// logs all items in the object onto the console
+function obj_to_xml(obj) {
+    let xml_str = "";
+    for (let item in obj) {
+        console.log(`${item}: ${obj[item]}`);
+        xml_str += `<${item}>${obj[item]}</${item}>\n`
+    }
+    xml_str = `<data>\n${xml_str}</data>`
+    return xml_str;
+}
+
+
 // listen for change in URL and update URL string variable
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
@@ -62,7 +75,7 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
             sendResponse(curr_url);
             break;
         case "listen-for-download":
-		    xml_str = message.xml;
+		    xml_str = obj_to_xml(message.info);
 
             // send message to content script to download
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {

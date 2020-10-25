@@ -7,7 +7,7 @@ $(document).ready(function(){
             switch(message.type) {
                 case "scrape":
                     candidate_info = scrape();
-                    sendResponse(obj_to_xml(candidate_info));
+                    sendResponse(candidate_info);
                     break;
                 case "download":
                     download_resume();
