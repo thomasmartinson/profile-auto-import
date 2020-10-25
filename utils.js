@@ -13,7 +13,7 @@ var REGEXES = {
     
     // mostly original, zip code portion from https://regexlib.com/REDetails.aspx?regexp_id=837
     // 1 or more digits, space, any combination of letters and certain punctuation, space, two-letter all-caps state code, space, zip code 
-    address: /\b\d+ [a-zA-Z., \r\n-]+ [A-Z]{2} +\d{5}(-\d{4})?\b/
+    address: /\b\d+ [a-zA-Z., \r\n-]+[A-Z]{2} +\d{5}(-\d{4})?\b/
 };
 
 
