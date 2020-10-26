@@ -2,6 +2,9 @@
 //   utility functions for import
 //
 
+// enable the extension popup
+chrome.runtime.sendMessage({"type": "activate-icon"});
+
 const SHORT_RESUME_LENGTH = 300;
 
 // obj with regexes useful for parsing info from resume text

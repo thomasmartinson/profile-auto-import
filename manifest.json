@@ -5,12 +5,11 @@
   "permissions": [
     "downloads",
     "tabs",
-    "activeTab",
     "declarativeContent",
     "storage"
   ],
   "options_page": "options.html",
-  "browser_action": {
+  "page_action": {
     "default_popup": "popup.html",
     "default_icon": {
       "16": "images/get_started16.png",
@@ -26,10 +25,11 @@
     "128": "images/get_started128.png"
   },
   "commands": {
-    "_execute_browser_action": {
+    "_execute_page_action": {
       "suggested_key": {
-        "default": "Ctrl+Shift+F",
-        "mac": "MacCtrl+Shift+F"
+        "default": "Ctrl+Shift+Q",
+        "windows": "Ctrl+Shift+Q",
+        "mac": "MacCtrl+Shift+Q"
       },
       "description": "Opens popup.html"
     }

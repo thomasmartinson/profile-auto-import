@@ -71,6 +71,9 @@ chrome.downloads.onDeterminingFilename.addListener(function(downloadItem, sugges
 // receive messages
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     switch (message.type) {
+        case "activate-icon":
+            chrome.pageAction.show(sender.tab.id);
+            break;
         case "url-request":
             sendResponse(curr_url);
             break;

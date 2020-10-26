@@ -33,3 +33,10 @@ $("#import_btn").click(function(element) {
   // send message to background
   chrome.runtime.sendMessage({type: "listen-for-download", info: candidate_info});
 });
+
+// skip the popup altogether
+if (!debugMode) {
+  $("#run_btn").click();
+} else {
+  $("#run_btn").show();
+}
