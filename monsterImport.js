@@ -46,7 +46,8 @@ function scrape() {
     // iterate across every element in resume doc
     $("#resume-frame").contents().find("*").each(function(){
         // insert linebreaks at every linebreaking element
-        if (["P", "LI", "BR"].includes($(this).prop("tagName"))) {
+        if (["P", "LI", "BR"].includes($(this).prop("tagName"))
+            || /H[1-6]/.test($(this).prop("tagName"))) { // headings
             resume_text += "\n";
         }
         // add text of elements with no children
