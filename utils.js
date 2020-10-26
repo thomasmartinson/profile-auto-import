@@ -40,6 +40,14 @@ function parse_from_resume(text) {
 }
 
 
+// returns a string with all whitespace replaced with " " or "\n"
+function clean_whitespace(dirty_str) {
+    return dirty_str
+        .replace(/\v/g, "\n") // vertical
+        .replace(/[^\S\v]/g, " "); // horizontal
+}
+
+
 // redirects to the notes protocol URL for the import document
 function redirect_to_notes() {
 	let notes_url ="notes:///8525644700814E57/C371775EAC5E88788525639E007B03A6/3A553EB348165344852585FB00783986";

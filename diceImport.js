@@ -80,6 +80,9 @@ function scrape() {
         });
     });
 
+    resume_text = clean_whitespace(resume_text);
+    short_resume_text = clean_whitespace(resume_text);
+
     // extract details from resume text
     let parsed_info = parse_from_resume(short_resume_text);
 
