@@ -50,7 +50,6 @@ function scrape() {
     }
 
     // parse the resume text
-    const max_length = 250;
     const px_buffer = 8;
     let resume_text = "";
 	let short_resume_text = "";
@@ -75,7 +74,7 @@ function scrape() {
     
             resume_text += $(this).text() + " ";
             // approx first few lines of resume
-            if (resume_text.length < max_length) {
+            if (resume_text.length < SHORT_RESUME_LENGTH) {
                 short_resume_text += $(this).text() + " ";
             }
         });
@@ -96,11 +95,12 @@ function scrape() {
     info["resume_updated"] = $("div[data-cy='profile-activity-resume-updated']").attr("title").split(": ")[1];
         
     // email address
-    let scraped_email = $("li[data-cy='profile-actions-email-contact-link'] div.media-body").text();
+    let scraped_email = $("li[data-cy='profile-actions-email-contact-link']:first div.media-body").text();
     // use parsed email first, and the scraped mail second, unless it is a Dice private email
     if (parsed_info.email) {
 		info["email"] = parsed_info.email;
-		if (!(/\.dice\./.test(scraped_email)) && (scraped_email.toLowerCase() !== parsed_info.email.toLowerCase()))  {
+        if (!(/@mail\.dice\.com/.test(scraped_email)) 
+            && (scraped_email.toLowerCase() !== parsed_info.email.toLowerCase()))  {
 			info["email2"] = scraped_email;
 		}
 	} else {
@@ -108,7 +108,7 @@ function scrape() {
 	}
 	
     // phone number
-    info["phone"] = $("li[data-cy='profile-actions-phone-contact-link'] div.media-body").text();
+    info["phone"] = $("li[data-cy='profile-actions-phone-contact-link']:first div.media-body").text();
     if (!info.phone) {
         info.phone = parsed_info.phone;
     }

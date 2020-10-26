@@ -42,7 +42,6 @@ function scrape() {
     }
 
     // parse the resume text
-    const max_length = 250;
     let resume_text = "";
     // iterate across every element in resume doc
     $("#resume-frame").contents().find("*").each(function(){
@@ -56,7 +55,7 @@ function scrape() {
         }
     });
 
-    let short_resume_text = resume_text.substring(0, max_length);
+    let short_resume_text = resume_text.substring(0, SHORT_RESUME_LENGTH);
     let parsed_info = parse_from_resume(short_resume_text);
     
     let info = {};

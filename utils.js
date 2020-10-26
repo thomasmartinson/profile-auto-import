@@ -2,6 +2,8 @@
 //   utility functions for import
 //
 
+const SHORT_RESUME_LENGTH = 300;
+
 // obj with regexes useful for parsing info from resume text
 var REGEXES = {
     // adapted from https://www.regular-expressions.info/email.html
@@ -13,7 +15,7 @@ var REGEXES = {
     
     // mostly original, zip code portion from https://regexlib.com/REDetails.aspx?regexp_id=837
     // 1 or more digits, optional dash followed by numbers, space, any combination of alphanumeric characters and certain punctuation, two-letter all-caps state code or state, space, zip code 
-    address: /\b\d+(-\d+)? [a-zA-Z0-9., \r\n-]+[A-Z]{1}[a-zA-Z]+ +\d{5}(-\d{4})?\b/
+    address: /\b\d+(-\d+)? [a-zA-Z0-9., \r\n-]+[A-Z]{1}[a-zA-Z]+ ?,? +\d{5}(-\d{4})?\b/
 };
 
 
