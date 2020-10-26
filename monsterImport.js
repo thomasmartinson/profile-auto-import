@@ -62,7 +62,7 @@ function scrape() {
     let info = {};
     
     // full name
-    info["name"] = $("#candidateProfile .candidate-name div span:first").text();
+    info["name"] = $("#candidateProfile .candidate-name:last div").text().split("Open In New Tab")[0];
 
     // last resume update
     info["resume_updated"] = $(".candidate-resumeupdated-text").text();
