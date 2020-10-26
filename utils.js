@@ -18,7 +18,7 @@ var REGEXES = {
     
     // mostly original, zip code portion from https://regexlib.com/REDetails.aspx?regexp_id=837
     // 1 or more digits, optional dash followed by numbers, space, any combination of alphanumeric characters and certain punctuation, two-letter all-caps state code or state, space, zip code 
-    address: /\b\d+(-\d+)? [a-zA-Z0-9., \r\n-]+[A-Z]{1}[a-zA-Z]+ ?,? +\d{5}(-\d{4})?\b/
+    address: /\b\d+(-\d+)? [a-zA-Z0-9., #\r\n-]+[A-Z]{1}[a-zA-Z]+ ?,? +\d{5}(-\d{4})?\b/
 };
 
 
@@ -39,37 +39,12 @@ function parse_from_resume(text) {
     return parsed_info;
 }
 
+
 // redirects to the notes protocol URL for the import document
 function redirect_to_notes() {
 	let notes_url ="notes:///8525644700814E57/C371775EAC5E88788525639E007B03A6/3A553EB348165344852585FB00783986";
 	window.location.href = notes_url;
 }	
-
-// download the given xml string into an xml file
-function download_xml(xml_str) {
-    download(xml_str, 'profile_import.xml', 'text/xml');
-}
-
-
-// Function to download data to a file
-// Adapted from https://stackoverflow.com/a/30832210 
-function download(data, filename, type) {
-    var file = new Blob([data], {type: type});
-    if (window.navigator.msSaveOrOpenBlob) // IE10+
-        window.navigator.msSaveOrOpenBlob(file, filename);
-    else { // Others
-        var a = document.createElement("a"),
-                url = URL.createObjectURL(file);
-        a.href = url;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        setTimeout(function() {
-            document.body.removeChild(a);
-            window.URL.revokeObjectURL(url);  
-        }, 0); 
-    }
-}
 
 
 // escapes all html chars in a given string
