@@ -9,7 +9,7 @@ chrome.runtime.onInstalled.addListener(function(details){
     chrome.storage.sync.set({debugging: false});
 
     chrome.contextMenus.create({
-        title: "Toggle debugging",
+        title: "Enable debugging",
         id: "toggle",
         contexts:["page_action"]
     });
@@ -21,6 +21,17 @@ chrome.contextMenus.onClicked.addListener(function(info, tab){
         chrome.storage.sync.get("debugging", function(result){
             chrome.storage.sync.set({debugging: !result.debugging});
         });
+    }
+});
+
+// change title on context menu item when debugging changes
+chrome.storage.onChanged.addListener(function(changes, areaName){
+    for (let item in changes) {
+        if (item === "debugging") {
+            let map = { true: "Disable", false: "Enable" };
+            let update_obj = { title: `${map[changes[item].newValue]} debugging` };
+            chrome.contextMenus.update("toggle", update_obj);
+        }
     }
 });
 
