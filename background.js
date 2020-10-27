@@ -6,21 +6,20 @@ let xml_str = null;
 
 // default storage settings
 chrome.runtime.onInstalled.addListener(function(details){
-    chrome.storage.sync.set({debug_mode: false}, function(){
-      console.log("Debug mode is OFF");  
+    chrome.storage.sync.set({debugging: false});
+
+    chrome.contextMenus.create({
+        title: "Toggle debugging",
+        id: "toggle",
+        contexts:["page_action"]
     });
 });
 
 // enable toggling debug via right-click of extension icon
-chrome.contextMenus.create({
- title: "Toggle debug mode",
- id: "toggle",
- contexts:["page_action"]
-});
 chrome.contextMenus.onClicked.addListener(function(info, tab){
     if (info.menuItemId === "toggle") {
-        chrome.storage.sync.get("debug_mode", function(result){
-            chrome.storage.sync.set({debug_mode: !result.debug_mode});
+        chrome.storage.sync.get("debugging", function(result){
+            chrome.storage.sync.set({debugging: !result.debugging});
         });
     }
 });

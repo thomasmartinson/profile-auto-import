@@ -1,7 +1,7 @@
 let debugMode;
 
-chrome.storage.sync.get("debug_mode", function(result){
-  debugMode = result.debug_mode
+chrome.storage.sync.get("debugging", function(result){
+  debugMode = result.debugging;
 
   // skip the popup altogether
   if (!debugMode) {
