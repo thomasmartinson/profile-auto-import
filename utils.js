@@ -43,8 +43,8 @@ function parse_from_resume(text) {
 // returns a string with all whitespace replaced with " " or "\n"
 function clean_whitespace(dirty_str) {
     return dirty_str
-        .replace(/\v/g, "\n") // vertical
-        .replace(/[^\S\v]/g, " "); // horizontal
+        .replace(/\r\v/g, "\n") // vertical
+        .replace(/[^\S\n]/g, " "); // horizontal
 }
 
 
