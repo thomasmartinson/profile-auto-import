@@ -1,4 +1,15 @@
-let debugMode = false;
+let debugMode;
+
+chrome.storage.sync.get("debug_mode", function(result){
+  debugMode = result.debug_mode
+
+  // skip the popup altogether
+  if (!debugMode) {
+    $("#run_btn").click();
+  } else {
+    $("#run_btn").show();
+  }
+});
 
 let candidate_info = null;
 
@@ -33,10 +44,3 @@ $("#import_btn").click(function(element) {
   // send message to background
   chrome.runtime.sendMessage({type: "listen-for-download", info: candidate_info});
 });
-
-// skip the popup altogether
-if (!debugMode) {
-  $("#run_btn").click();
-} else {
-  $("#run_btn").show();
-}

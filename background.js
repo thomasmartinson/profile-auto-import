@@ -4,18 +4,12 @@ let state = "awaiting resume";
 let active_tab_id = null;
 let xml_str = null;
 
-// converts the given javascript object to an xml string
-// logs all items in the object onto the console
-function obj_to_xml(obj) {
-    let xml_str = "";
-    for (let item in obj) {
-        console.log(`${item}: ${obj[item]}`);
-        xml_str += `<${item}>${obj[item]}</${item}>\n`
-    }
-    xml_str = `<data>\n${xml_str}</data>`
-    return xml_str;
-}
-
+// default storage settings
+chrome.runtime.onInstalled.addListener(function(details){
+    chrome.storage.sync.set({debug_mode: false}, function(){
+      console.log("Debug mode is OFF");  
+    });
+});
 
 // listen for change in URL and update URL string variable
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
@@ -64,8 +58,6 @@ chrome.downloads.onDeterminingFilename.addListener(function(downloadItem, sugges
 		// avoid a loop
 		state = "awaiting XML";
 	} 
-	
-
 });
 
 // receive messages
@@ -88,3 +80,15 @@ chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
             break;
     }
 });
+
+// converts the given javascript object to an xml string
+// logs all items in the object onto the console
+function obj_to_xml(obj) {
+    let xml_str = "";
+    for (let item in obj) {
+        console.log(`${item}: ${obj[item]}`);
+        xml_str += `<${item}>${obj[item]}</${item}>\n`
+    }
+    xml_str = `<data>\n${xml_str}</data>`
+    return xml_str;
+}
