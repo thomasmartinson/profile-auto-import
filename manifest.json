@@ -3,6 +3,7 @@
   "version": "1.0",
   "description": "Import a candidate profile at the press of a button!",
   "permissions": [
+    "contextMenus",
     "downloads",
     "tabs",
     "declarativeContent",

@@ -11,6 +11,20 @@ chrome.runtime.onInstalled.addListener(function(details){
     });
 });
 
+// enable toggling debug via right-click of extension icon
+chrome.contextMenus.create({
+ title: "Toggle debug mode",
+ id: "toggle",
+ contexts:["page_action"]
+});
+chrome.contextMenus.onClicked.addListener(function(info, tab){
+    if (info.menuItemId === "toggle") {
+        chrome.storage.sync.get("debug_mode", function(result){
+            chrome.storage.sync.set({debug_mode: !result.debug_mode});
+        });
+    }
+});
+
 // listen for change in URL and update URL string variable
 chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     chrome.tabs.query({active: true, lastFocusedWindow: true}, tabs => {
