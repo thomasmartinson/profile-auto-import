@@ -98,17 +98,22 @@ function scrape() {
     info["resume_updated"] = $("div[data-cy='profile-activity-resume-updated']").attr("title").split(": ")[1];
         
     // email address
-    let scraped_email = $("li[data-cy='profile-actions-email-contact-link']:first div.media-body").text();
-    // use parsed email first, and the scraped mail second, unless it is a Dice private email
+    let scraped_email = $("li[data-cy='profile-actions-email-contact-link']:first div.media-body").text().toLowerCase();
+    let scraped_email_2 = $("li[data-cy='profile-actions-email-contact-link']:last div.media-body").text().toLowerCase();
+    // assign first email, giving priority to parsed email
     if (parsed_info.email) {
-		info["email"] = parsed_info.email;
-        if (!(/@mail\.dice\.com/.test(scraped_email)) 
-            && (scraped_email.toLowerCase() !== parsed_info.email.toLowerCase()))  {
-			info["email2"] = scraped_email;
-		}
-	} else {
-		info["email"] = scraped_email;
-	}
+        info["email"] = parsed_info.email;
+    } else {
+        info["email"] = scraped_email;
+    }
+    // assign second email, checking for no duplicates or Dice private emails
+    if (scraped_email !== info.email && !is_private(scraped_email)) {
+        info["email2"] = scraped_email;
+    } else if (scraped_email_2 !== info.email && !is_private(scraped_email_2)) {
+        info["email2"] = scraped_email_2;
+    } else {
+        info["email2"] = "";
+    }
 	
     // phone number
     info["phone"] = $("li[data-cy='profile-actions-phone-contact-link']:first div.media-body").text();
@@ -133,7 +138,13 @@ function scrape() {
     info["profile_id"] = CURR_URL.split("profile/")[1].split("?")[0];
 	
 	// set the source
-	info["source"] = "Dice"
+	info["source"] = "Dice";
 
     return info;
+}
+
+
+// returns true if the given string is a Dice private email
+function is_private(str) {
+    return /@mail\.dice\.com/.test(str);
 }
