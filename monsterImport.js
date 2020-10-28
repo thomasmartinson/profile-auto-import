@@ -63,23 +63,23 @@ function scrape() {
     let info = {};
 
     // full name
-    info["name"] = $("#candidateProfile .candidate-name").text().trim().split("Open In New Tab")[0];
+    info.name = $("#candidateProfile .candidate-name").text().trim().split("Open In New Tab")[0];
 
     // last resume update
-    info["resume_updated"] = $(".candidate-resumeupdated-text").text();
+    info.resume_updated = $(".candidate-resumeupdated-text").text();
 
     // email address
-    info["email"] = $(".has-candidate-contact-block:last-child #contact-legend-detail").text().trim();
+    info.email = $(".has-candidate-contact-block:last-child #contact-legend-detail").text().trim();
     if (!info.email) {
         info.email = parsed_info.email;
     } else {
         if ((parsed_info.email !== "") & (parsed_info.email.toLowerCase() !== info.email.toLowerCase())) {
-            info["email2"] = parsed_info.email;
+            info.email2 = parsed_info.email;
         }
     }
 
     // phone number
-    info["phone"] = reformat_phone($(".has-candidate-contact-block:first-child").text());
+    info.phone = reformat_phone($(".has-candidate-contact-block:first-child").text());
 
     if (!info.phone) {
         info.phone = reformat_phone($(".has-candidate-contact-block:nth-child(2)").text());
@@ -88,16 +88,16 @@ function scrape() {
         info.phone = reformat_phone(parsed_info.phone);
     }
     // full address
-    info["address"] = parsed_info.address;
+    info.address = parsed_info.address;
     if (!info.address) {
-        info["address"] = $("#candidateProfile .candidate-location").text();
+        info.address = $("#candidateProfile .candidate-location").text();
     }
 
     // full text of resume
-    info["resume_preview"] = escape_html(resume_text);
+    info.resume_preview = escape_html(resume_text);
 
     // set the source
-    info["source"] = "Monster"
+    info.source = "Monster"
 
     return info;
 }

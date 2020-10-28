@@ -89,56 +89,56 @@ function scrape() {
     let info = {};
 
     // full name
-    info["name"] = $("#profile-page-info-name").text().trim();
+    info.name = $("#profile-page-info-name").text().trim();
 
     // last user activity on the site
-    info["last_activity"] = $("div[data-cy='profile-activity-date-last-active']").attr("title").split(": ")[1];
+    info.last_activity = $("div[data-cy='profile-activity-date-last-active']").attr("title").split(": ")[1];
 
     // last time the resume was updated
-    info["resume_updated"] = $("div[data-cy='profile-activity-resume-updated']").attr("title").split(": ")[1];
+    info.resume_updated = $("div[data-cy='profile-activity-resume-updated']").attr("title").split(": ")[1];
 
     // email address
     let scraped_email = $("li[data-cy='profile-actions-email-contact-link']:first div.media-body").text().toLowerCase();
     let scraped_email_2 = $("li[data-cy='profile-actions-email-contact-link']:last div.media-body").text().toLowerCase();
     // assign first email, giving priority to parsed email
     if (parsed_info.email) {
-        info["email"] = parsed_info.email;
+        info.email = parsed_info.email;
     } else {
-        info["email"] = scraped_email;
+        info.email = scraped_email;
     }
     // assign second email, checking for no duplicates or Dice private emails
     if (scraped_email !== info.email && !is_private(scraped_email)) {
-        info["email2"] = scraped_email;
+        info.email2 = scraped_email;
     } else if (scraped_email_2 !== info.email && !is_private(scraped_email_2)) {
-        info["email2"] = scraped_email_2;
+        info.email2 = scraped_email_2;
     } else {
-        info["email2"] = "";
+        info.email2 = "";
     }
 
     // phone number
-    info["phone"] = $("li[data-cy='profile-actions-phone-contact-link']:first div.media-body").text();
+    info.phone = $("li[data-cy='profile-actions-phone-contact-link']:first div.media-body").text();
     if (!info.phone) {
         info.phone = parsed_info.phone;
     }
     info.phone = reformat_phone(info.phone);
 
     // home adress, or city of residence
-    info["address"] = parsed_info.address;
+    info.address = parsed_info.address;
     if (!info.address) {
         info.address = $("a[data-cy='location']:first").text().trim();
     }
 
     // work documents
-    info["work_docs"] = $("span[data-cy='work-permit-document']").text().trim();
+    info.work_docs = $("span[data-cy='work-permit-document']").text().trim();
 
     // add resume text
-    info["resume_preview"] = escape_html(resume_text);
+    info.resume_preview = escape_html(resume_text);
 
     // get profile ID from the current URL
-    info["profile_id"] = CURR_URL.split("profile/")[1].split("?")[0];
+    info.profile_id = CURR_URL.split("profile/")[1].split("?")[0];
 
     // set the source
-    info["source"] = "Dice";
+    info.source = "Dice";
 
     return info;
 }
