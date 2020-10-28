@@ -17,8 +17,9 @@ var REGEXES = {
     phone: /\b\(?\d{3}\)?[ –.-]*\d{3}[ –.-]*\d{4}\b/,
 
     // mostly original, zip code portion from https://regexlib.com/REDetails.aspx?regexp_id=837
-    // 1 or more digits, optional dash followed by numbers, space, any combination of alphanumeric characters and certain punctuation, two-letter all-caps state code or state, space, zip code 
-    address: /\b\d+(-\d+)? [a-zA-Z0-9., #\r\n-]+[A-Z]{1}[a-zA-Z]+ ?,? +\d{5}(-\d{4})?\b/
+    // 1 or more digits, optional dash followed by numbers, space, any combination of alphanumeric 
+    // characters and certain punctuation, two-letter all-caps state code or state, zip code 
+    address: /\b\d+(-\d+)? [a-zA-Z0-9., #\r\n-]+[A-Z]{1}[a-zA-Z]+ ?,? *\d{5}(-\d{4})?\b/
 };
 
 

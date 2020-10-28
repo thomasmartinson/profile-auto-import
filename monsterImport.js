@@ -44,7 +44,7 @@ function scrape() {
     // parse the resume text
     let resume_text = "";
     // iterate across every element in resume doc
-    $("#resume-frame").contents().find("*").each(function () {
+    $("#resume-frame").contents().find("body *").each(function () {
         // insert linebreaks at every linebreaking element
         if (["P", "LI", "BR"].includes($(this).prop("tagName"))
             || /H[1-6]/.test($(this).prop("tagName"))) { // headings
@@ -78,15 +78,25 @@ function scrape() {
         }
     }
 
-    // phone number
-    info.phone = reformat_phone($(".has-candidate-contact-block:first-child").text());
+    // phone number, prioritize scraped numbers over parsed number
+    let scraped_phone = reformat_phone($(".has-candidate-contact-block:first-child").text());
+    let scraped_phone_2 = reformat_phone($(".has-candidate-contact-block:nth-child(2)").text());
+    let parsed_phone = reformat_phone(parsed_info.phone);
+    // first number
+    if (scraped_phone) {
+        info.phone = scraped_phone;
+    } else if (scraped_phone_2) {
+        info.phone = scraped_phone_2;
+    } else {
+        info.phone = parsed_phone;
+    }
+    // second number
+    if (scraped_phone_2 && scraped_phone_2 !== info.phone) {
+        info.phone2 = scraped_phone_2;
+    } else if (parsed_phone && parsed_phone !== info.phone) {
+        info.phone2 = parsed_phone;
+    }
 
-    if (!info.phone) {
-        info.phone = reformat_phone($(".has-candidate-contact-block:nth-child(2)").text());
-    }
-    if (!info.phone) {
-        info.phone = reformat_phone(parsed_info.phone);
-    }
     // full address
     info.address = parsed_info.address;
     if (!info.address) {
