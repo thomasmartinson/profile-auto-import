@@ -1,29 +1,29 @@
 let CURR_URL;
 
-$(document).ready(function(){ 
+$(document).ready(function () {
     let candidate_info = {};
-    
+
     // update current URL
-    chrome.runtime.sendMessage({type:"url-request"}, function(response){
+    chrome.runtime.sendMessage({ type: "url-request" }, function (response) {
         CURR_URL = response;
     });
 
     // handle messages
     chrome.runtime.onMessage.addListener(
-        function(message, sender, sendResponse){
-            switch(message.type) {
+        function (message, sender, sendResponse) {
+            switch (message.type) {
                 case "scrape":
-                    candidate_info = scrape();     
+                    candidate_info = scrape();
                     sendResponse(candidate_info);
                     break;
                 case "download":
                     download_resume();
                     break;
-				case "redirect":
+                case "redirect":
                     redirect_to_notes();
                     break;
             }
-        }  
+        }
     );
 });
 
@@ -33,10 +33,10 @@ function download_resume() {
     $("#button-download-resume").click();
     // inject script into web page
     // source: https://stackoverflow.com/a/9517879
-    var actualCode = `document.getElementsByClassName('dropdown-item')[1].click()`;
+    let actualCode = `document.getElementsByClassName('dropdown-item')[1].click()`;
     var script = document.createElement('script');
     script.textContent = actualCode;
-    (document.head||document.documentElement).appendChild(script);
+    (document.head || document.documentElement).appendChild(script);
     script.remove();
 }
 
@@ -52,10 +52,10 @@ function scrape() {
     // parse the resume text
     const px_buffer = 8;
     let resume_text = "";
-	let short_resume_text = "";
-    $("div.page div.textLayer").each(function(){ // iterate over each page
+    let short_resume_text = "";
+    $("div.page div.textLayer").each(function () { // iterate over each page
         // sort by "top" css value, and then by "left"
-        let sorted_elems = $(this).children().sort(function(a, b) {
+        let sorted_elems = $(this).children().sort(function (a, b) {
             let diff = a.offsetTop - b.offsetTop;
             if (diff == 0) {
                 diff = a.offsetLeft - b.offsetLeft;
@@ -64,14 +64,14 @@ function scrape() {
         });
 
         let max_px_height = 0;
-        sorted_elems.each(function() {
+        sorted_elems.each(function () {
             let this_px_height = this.offsetTop;
-            
+
             if (max_px_height + px_buffer < this_px_height) {
                 max_px_height = this_px_height;
                 resume_text += "\n";
             }
-    
+
             resume_text += $(this).text() + " ";
             // approx first few lines of resume
             if (resume_text.length < SHORT_RESUME_LENGTH) {
@@ -93,10 +93,10 @@ function scrape() {
 
     // last user activity on the site
     info["last_activity"] = $("div[data-cy='profile-activity-date-last-active']").attr("title").split(": ")[1];
-    
+
     // last time the resume was updated
     info["resume_updated"] = $("div[data-cy='profile-activity-resume-updated']").attr("title").split(": ")[1];
-        
+
     // email address
     let scraped_email = $("li[data-cy='profile-actions-email-contact-link']:first div.media-body").text().toLowerCase();
     let scraped_email_2 = $("li[data-cy='profile-actions-email-contact-link']:last div.media-body").text().toLowerCase();
@@ -114,7 +114,7 @@ function scrape() {
     } else {
         info["email2"] = "";
     }
-	
+
     // phone number
     info["phone"] = $("li[data-cy='profile-actions-phone-contact-link']:first div.media-body").text();
     if (!info.phone) {
@@ -130,15 +130,15 @@ function scrape() {
 
     // work documents
     info["work_docs"] = $("span[data-cy='work-permit-document']").text().trim();
-    
+
     // add resume text
     info["resume_preview"] = escape_html(resume_text);
 
     // get profile ID from the current URL
     info["profile_id"] = CURR_URL.split("profile/")[1].split("?")[0];
-	
-	// set the source
-	info["source"] = "Dice";
+
+    // set the source
+    info["source"] = "Dice";
 
     return info;
 }

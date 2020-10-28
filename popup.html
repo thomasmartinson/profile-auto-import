@@ -1,28 +1,33 @@
 <!doctype html>
 <html>
-    <head>
-        <title>Title</title>
-        <style>
-            body {
-                font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
-                font-size: 100%;
-            }
-            #status {
-                white-space: pre;
-                text-overflow: ellipsis;
-                overflow: hidden;
-                max-width: 400px;
-            }
-            button {
-              outline: none;
-            }
-        </style>
-    </head>
-    <body>
-        <button id="run_btn" hidden=true>Extract profile info</button>
-        <button id="import_btn" hidden=true>Looks good!</button>
-        <p id="text" hidden=true></p>
-    </body>
-    <script src="jquery-3.5.1.min.js"></script>
-    <script src="popup.js"></script>
+
+<head>
+    <title>Title</title>
+    <style>
+        body {
+            font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+            font-size: 100%;
+        }
+
+        #status {
+            white-space: pre;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            max-width: 400px;
+        }
+
+        button {
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <button id="run_btn" hidden=true>Extract profile info</button>
+    <button id="import_btn" hidden=true>Looks good!</button>
+    <p id="text" hidden=true></p>
+</body>
+<script src="jquery-3.5.1.min.js"></script>
+<script src="popup.js"></script>
+
 </html>

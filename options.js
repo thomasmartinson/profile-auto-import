@@ -1,5 +1,5 @@
 // update UI when the item in storage changes
-chrome.storage.onChanged.addListener(function(changes, areaName){
+chrome.storage.onChanged.addListener(function (changes, areaName) {
     for (let item in changes) {
         if (item === "debugging") {
             update_ui(changes[item].newValue);
@@ -8,14 +8,14 @@ chrome.storage.onChanged.addListener(function(changes, areaName){
 });
 
 // update with the synced setting on page load
-chrome.storage.sync.get("debugging", function(result){
+chrome.storage.sync.get("debugging", function (result) {
     update_ui(result.debugging);
 });
 
 // toggle setting and update UI on click event
-$("#toggle").click(function(element) {
-    chrome.storage.sync.get("debugging", function(result){
-        chrome.storage.sync.set({"debugging": !result.debugging});
+$("#toggle").click(function (element) {
+    chrome.storage.sync.get("debugging", function (result) {
+        chrome.storage.sync.set({ "debugging": !result.debugging });
     });
 });
 
