@@ -71,7 +71,7 @@ function scrape() {
     unsorted_resume_text = clean_whitespace(unsorted_resume_text);
 
     let short_resume_text = resume_text.substring(0, SHORT_RESUME_LENGTH);
-    let short_unsorted_resume_text = unsorted_resume_text.substring(0, SHORT_RESUME_LENGTH);
+    let short_unsorted_resume_text = unsorted_resume_text.substring(0, SHORT_RESUME_LENGTH + 50);
     
     // extract details from resume text
     let parsed_info = parse_from_resume(short_resume_text);
@@ -79,7 +79,7 @@ function scrape() {
     let parsed_info_unsorted = parse_from_resume(short_unsorted_resume_text);
     for (item in parsed_info) {
         if (!parsed_info[item] && parsed_info_unsorted[item]) {
-            parsed_info[item] == parsed_info_unsorted[item];
+            parsed_info[item] = parsed_info_unsorted[item];
         }
     }
     console.log(`Unsorted resume short text :\n${short_unsorted_resume_text}`);
