@@ -50,9 +50,8 @@ function scrape() {
     }
 
     // parse the resume text
-    const px_buffer = 8;
     let resume_text = "";
-    let short_resume_text = "";
+    let unsorted_resume_text = "";
     $("div.page div.textLayer").each(function () { // iterate over each page
         // sort by "top" css value, and then by "left"
         let sorted_elems = $(this).children().sort(function (a, b) {
@@ -62,29 +61,28 @@ function scrape() {
             }
             return diff;
         });
+        let unsorted_elems = $(this).children();
 
-        let max_px_height = 0;
-        sorted_elems.each(function () {
-            let this_px_height = this.offsetTop;
-
-            if (max_px_height + px_buffer < this_px_height) {
-                max_px_height = this_px_height;
-                resume_text += "\n";
-            }
-
-            resume_text += $(this).text() + " ";
-            // approx first few lines of resume
-            if (resume_text.length < SHORT_RESUME_LENGTH) {
-                short_resume_text += $(this).text() + " ";
-            }
-        });
+        resume_text += capture_resume_text(sorted_elems);
+        unsorted_resume_text += capture_resume_text(unsorted_elems);
     });
 
     resume_text = clean_whitespace(resume_text);
-    short_resume_text = clean_whitespace(resume_text);
+    unsorted_resume_text = clean_whitespace(unsorted_resume_text);
 
+    let short_resume_text = resume_text.substring(0, SHORT_RESUME_LENGTH);
+    let short_unsorted_resume_text = unsorted_resume_text.substring(0, SHORT_RESUME_LENGTH);
+    
     // extract details from resume text
     let parsed_info = parse_from_resume(short_resume_text);
+    console.log("Parsing unsorted text...");
+    let parsed_info_unsorted = parse_from_resume(short_unsorted_resume_text);
+    for (item in parsed_info) {
+        if (!parsed_info[item] && parsed_info_unsorted[item]) {
+            parsed_info[item] == parsed_info_unsorted[item];
+        }
+    }
+    console.log(`Unsorted resume short text :\n${short_unsorted_resume_text}`);
 
     let info = {};
 
@@ -151,6 +149,27 @@ function scrape() {
     info.source = "Dice";
 
     return info;
+}
+
+
+// capture the resume text from the given resume elements
+function capture_resume_text(elems) {
+    const px_buffer = 8;
+
+    let resume_text = "";
+    let max_px_height = 0;
+    elems.each(function () {
+        let this_px_height = this.offsetTop;
+
+        if (Math.abs(this_px_height - max_px_height) > px_buffer) {
+            max_px_height = this_px_height;
+            resume_text += "\n";
+        }
+
+        resume_text += $(this).text() + " ";
+    });
+
+    return resume_text;
 }
 
 
