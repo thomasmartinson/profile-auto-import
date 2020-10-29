@@ -1,4 +1,5 @@
 let CURR_URL;
+let OVERRIDE = false;
 
 $(document).ready(function () {
     let candidate_info = {};
@@ -22,6 +23,10 @@ $(document).ready(function () {
                 case "redirect":
                     redirect_to_notes();
                     break;
+                case "override":
+                    OVERRIDE = true;
+                    sendResponse();
+                    break;
             }
         }
     );
@@ -44,9 +49,9 @@ function download_resume() {
 // extracts all info from candidate profile page, returned in an object
 function scrape() {
     // make sure the resume preview is loaded
-    if ($(".textLayer span").length < 1) {
-        alert("Please wait for the resume preview to load before importing.");
-        return {};
+    if ($(".textLayer span").length < 1 && !OVERRIDE) {
+        OVERRIDE = false;
+        return "Please wait for the resume preview to load before importing.";
     }
 
     // parse the resume text
