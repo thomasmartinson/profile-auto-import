@@ -41,11 +41,17 @@ function parse_from_resume(text) {
 }
 
 
-// returns a string with all whitespace replaced with " " or "\n"
+// returns a string with all whitespace replaced with " " or "\n" 
+
 function clean_whitespace(dirty_str) {
     return dirty_str
         .replace(/\r\v/g, "\n") // vertical
-        .replace(/[^\S\n]/g, " "); // horizontal
+		.replace(/[^\S\n]/g, " "); // horizontal
+}
+
+// Remove spaces between c h a r a c t e r s  i n  t h i s   p a t t e r n
+function squeeze_spaced_text(dirty_str) {
+    return dirty_str.replace(/\s(?=\S(\s|$))(?<=(^|\s)\S\s)/g, "");
 }
 
 

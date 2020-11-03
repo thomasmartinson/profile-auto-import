@@ -1,4 +1,4 @@
-let CURR_URL;
+let CURR_URL = "";
 let OVERRIDE = false;
 
 $(document).ready(function () {
@@ -77,10 +77,12 @@ function scrape() {
 
     let short_resume_text = resume_text.substring(0, SHORT_RESUME_LENGTH);
     let short_unsorted_resume_text = unsorted_resume_text.substring(0, SHORT_RESUME_LENGTH + 50);
+	
+	short_resume_text = squeeze_spaced_text(short_resume_text);
+    short_unsorted_resume_text = squeeze_spaced_text(short_unsorted_resume_text);
     
     // extract details from resume text
     let parsed_info = parse_from_resume(short_resume_text);
-    console.log("Parsing unsorted text...");
     let parsed_info_unsorted = parse_from_resume(short_unsorted_resume_text);
     for (item in parsed_info) {
         if (!parsed_info[item] && parsed_info_unsorted[item]) {
